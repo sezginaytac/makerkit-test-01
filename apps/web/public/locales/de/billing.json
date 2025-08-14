@@ -1,0 +1,120 @@
+{
+  "subscriptionTabSubheading": "Verwalten Sie Ihr Abonnement und Ihre Abrechnung",
+  "planCardTitle": "Ihr Plan",
+  "planCardDescription": "Unten finden Sie die Details Ihres aktuellen Plans. Sie können Ihren Plan ändern oder Ihr Abonnement jederzeit kündigen.",
+  "planRenewal": "Erneuert sich alle {{interval}} für {{price}}",
+  "planDetails": "Plandetails",
+  "checkout": "Zur Kasse",
+  "trialEndsOn": "Ihre Testphase endet am",
+  "billingPortalCardButton": "Abrechnungsportal besuchen",
+  "billingPortalCardTitle": "Verwalten Sie Ihre Abrechnungsdetails",
+  "billingPortalCardDescription": "Besuchen Sie Ihr Abrechnungsportal, um Ihr Abonnement und Ihre Abrechnung zu verwalten. Sie können Ihren Plan aktualisieren oder kündigen oder Ihre Rechnungen herunterladen.",
+  "cancelAtPeriodEndDescription": "Ihr Abonnement ist geplant, am {{- endDate }} gekündigt zu werden.",
+  "renewAtPeriodEndDescription": "Ihr Abonnement ist geplant, am {{- endDate }} erneuert zu werden",
+  "noPermissionsAlertHeading": "Sie haben keine Berechtigung, die Abrechnungseinstellungen zu ändern",
+  "noPermissionsAlertBody": "Bitte kontaktieren Sie Ihren Kontoinhaber, um die Abrechnungseinstellungen für Ihr Konto zu ändern.",
+  "checkoutSuccessTitle": "Fertig! Sie sind bereit.",
+  "checkoutSuccessDescription": "Vielen Dank für Ihr Abonnement, wir haben Ihr Abonnement erfolgreich verarbeitet! Eine Bestätigungs-E-Mail wird an {{ customerEmail }} gesendet.",
+  "checkoutSuccessBackButton": "Zur App",
+  "cannotManageBillingAlertTitle": "Sie können die Abrechnung nicht verwalten",
+  "cannotManageBillingAlertDescription": "Sie haben keine Berechtigung, die Abrechnung zu verwalten. Bitte kontaktieren Sie Ihren Kontoinhaber.",
+  "manageTeamPlan": "Verwalten Sie Ihren Team-Plan",
+  "manageTeamPlanDescription": "Wählen Sie einen Plan, der zu den Bedürfnissen Ihres Teams passt. Sie können Ihren Plan jederzeit upgraden oder downgraden.",
+  "basePlan": "Basis-Plan",
+  "billingInterval": {
+    "label": "Wählen Sie Ihr Abrechnungsintervall",
+    "month": "Monatlich abgerechnet",
+    "year": "Jährlich abgerechnet"
+  },
+  "perMonth": "Monat",
+  "custom": "Benutzerdefinierter Plan",
+  "lifetime": "Lebenslang",
+  "trialPeriod": "{{period}} Tage Testphase",
+  "perPeriod": "pro {{period}}",
+  "redirectingToPayment": "Weiterleitung zur Kasse. Bitte warten...",
+  "proceedToPayment": "Zur Zahlung",
+  "startTrial": "Testphase starten",
+  "perTeamMember": "Pro Teammitglied",
+  "perUnit": "Pro {{unit}} Nutzung",
+  "teamMembers": "Teammitglieder",
+  "includedUpTo": "Bis zu {{upTo}} {{unit}} im Plan enthalten",
+  "fromPreviousTierUpTo": "für jede {{unit}} für die nächsten {{ upTo }} {{ unit }}",
+  "andAbove": "über {{ previousTier }} {{ unit }}",
+  "startingAtPriceUnit": "Ab {{price}}/{{unit}}",
+  "priceUnit": "{{price}}/{{unit}}",
+  "forEveryUnit": "für jede {{ unit }}",
+  "setupFee": "plus eine {{ setupFee }} Einrichtungsgebühr",
+  "perUnitIncluded": "({{included}} enthalten)",
+  "featuresLabel": "Funktionen",
+  "detailsLabel": "Details",
+  "planPickerLabel": "Wählen Sie Ihren bevorzugten Plan",
+  "planCardLabel": "Verwalten Sie Ihren Plan",
+  "planPickerAlertErrorTitle": "Fehler bei der Kassenanfrage",
+  "planPickerAlertErrorDescription": "Bei der Kassenanfrage ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
+  "subscriptionCancelled": "Abonnement gekündigt",
+  "cancelSubscriptionDate": "Ihr Abonnement wird am Ende der Periode gekündigt",
+  "noPlanChosen": "Bitte wählen Sie einen Plan",
+  "noIntervalPlanChosen": "Bitte wählen Sie ein Abrechnungsintervall",
+  "status": {
+    "free": {
+      "badge": "Kostenloser Plan",
+      "heading": "Sie sind derzeit auf dem kostenlosen Plan",
+      "description": "Sie sind auf einem kostenlosen Plan. Sie können jederzeit zu einem kostenpflichtigen Plan upgraden."
+    },
+    "active": {
+      "badge": "Aktiv",
+      "heading": "Ihr Abonnement ist aktiv",
+      "description": "Ihr Abonnement ist aktiv. Sie können Ihr Abonnement und Ihre Abrechnung im Kundenportal verwalten."
+    },
+    "trialing": {
+      "badge": "Testphase",
+      "heading": "Sie sind in der Testphase",
+      "description": "Sie können die Vorteile des Plans genießen, bis die Testphase endet"
+    },
+    "past_due": {
+      "badge": "Überfällig",
+      "heading": "Ihre Rechnung ist überfällig",
+      "description": "Ihre Rechnung ist überfällig. Bitte aktualisieren Sie Ihre Zahlungsmethode."
+    },
+    "canceled": {
+      "badge": "Gekündigt",
+      "heading": "Ihr Abonnement ist gekündigt",
+      "description": "Ihr Abonnement ist gekündigt. Es ist geplant, am Ende der Abrechnungsperiode zu enden."
+    },
+    "unpaid": {
+      "badge": "Unbezahlt",
+      "heading": "Ihre Rechnung ist unbezahlt",
+      "description": "Ihre Rechnung ist unbezahlt. Bitte aktualisieren Sie Ihre Zahlungsmethode."
+    },
+    "incomplete": {
+      "badge": "Unvollständig",
+      "heading": "Wir warten auf Ihre Zahlung",
+      "description": "Wir warten darauf, dass Ihre Zahlung durchgeht. Bitte haben Sie Geduld."
+    },
+    "incomplete_expired": {
+      "badge": "Abgelaufen",
+      "heading": "Ihre Zahlung ist abgelaufen",
+      "description": "Ihre Zahlung ist abgelaufen. Bitte aktualisieren Sie Ihre Zahlungsmethode."
+    },
+    "paused": {
+      "badge": "Pausiert",
+      "heading": "Ihr Abonnement ist pausiert",
+      "description": "Ihr Abonnement ist pausiert. Sie können es jederzeit fortsetzen."
+    },
+    "succeeded": {
+      "badge": "Erfolgreich",
+      "heading": "Ihre Zahlung war erfolgreich",
+      "description": "Ihre Zahlung war erfolgreich. Vielen Dank für Ihr Abonnement!"
+    },
+    "pending": {
+      "badge": "Ausstehend",
+      "heading": "Ihre Zahlung ist ausstehend",
+      "description": "Ihre Zahlung ist ausstehend. Bitte haben Sie Geduld."
+    },
+    "failed": {
+      "badge": "Fehlgeschlagen",
+      "heading": "Ihre Zahlung ist fehlgeschlagen",
+      "description": "Ihre Zahlung ist fehlgeschlagen. Bitte aktualisieren Sie Ihre Zahlungsmethode."
+    }
+  }
+}

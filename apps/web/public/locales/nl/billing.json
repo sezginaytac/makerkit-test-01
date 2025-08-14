@@ -1,0 +1,120 @@
+{
+  "subscriptionTabSubheading": "Beheer uw abonnement en facturering",
+  "planCardTitle": "Uw plan",
+  "planCardDescription": "Hieronder vindt u de details van uw huidige plan. U kunt uw plan wijzigen of uw abonnement op elk moment annuleren.",
+  "planRenewal": "Verlengt elke {{interval}} voor {{price}}",
+  "planDetails": "Plandetails",
+  "checkout": "Afrekenen",
+  "trialEndsOn": "Uw proefperiode eindigt op",
+  "billingPortalCardButton": "Factureringsportal bezoeken",
+  "billingPortalCardTitle": "Beheer uw factureringsdetails",
+  "billingPortalCardDescription": "Bezoek uw factureringsportal om uw abonnement en facturering te beheren. U kunt uw plan bijwerken of annuleren, of uw facturen downloaden.",
+  "cancelAtPeriodEndDescription": "Uw abonnement is gepland om te worden geannuleerd op {{- endDate }}.",
+  "renewAtPeriodEndDescription": "Uw abonnement is gepland om te worden verlengd op {{- endDate }}",
+  "noPermissionsAlertHeading": "U heeft geen toestemming om de factureringsinstellingen te wijzigen",
+  "noPermissionsAlertBody": "Neem contact op met uw accounteigenaar om de factureringsinstellingen voor uw account te wijzigen.",
+  "checkoutSuccessTitle": "Klaar! U bent klaar.",
+  "checkoutSuccessDescription": "Bedankt voor uw abonnement, we hebben uw abonnement succesvol verwerkt! Een bevestigingse-mail wordt verzonden naar {{ customerEmail }}.",
+  "checkoutSuccessBackButton": "Naar app",
+  "cannotManageBillingAlertTitle": "U kunt de facturering niet beheren",
+  "cannotManageBillingAlertDescription": "U heeft geen toestemming om de facturering te beheren. Neem contact op met uw accounteigenaar.",
+  "manageTeamPlan": "Beheer uw teamplan",
+  "manageTeamPlanDescription": "Kies een plan dat past bij de behoeften van uw team. U kunt uw plan op elk moment upgraden of downgraden.",
+  "basePlan": "Basisplan",
+  "billingInterval": {
+    "label": "Kies uw factureringsinterval",
+    "month": "Maandelijks gefactureerd",
+    "year": "Jaarlijks gefactureerd"
+  },
+  "perMonth": "maand",
+  "custom": "Aangepast plan",
+  "lifetime": "Levenslang",
+  "trialPeriod": "{{period}} dagen proefperiode",
+  "perPeriod": "per {{period}}",
+  "redirectingToPayment": "Doorverwijzen naar afrekenen. Even geduld...",
+  "proceedToPayment": "Doorgaan naar betaling",
+  "startTrial": "Proefperiode starten",
+  "perTeamMember": "Per teamlid",
+  "perUnit": "Per {{unit}} gebruik",
+  "teamMembers": "Teamleden",
+  "includedUpTo": "Tot {{upTo}} {{unit}} inbegrepen in het plan",
+  "fromPreviousTierUpTo": "voor elke {{unit}} voor de volgende {{ upTo }} {{ unit }}",
+  "andAbove": "boven {{ previousTier }} {{ unit }}",
+  "startingAtPriceUnit": "Vanaf {{price}}/{{unit}}",
+  "priceUnit": "{{price}}/{{unit}}",
+  "forEveryUnit": "voor elke {{ unit }}",
+  "setupFee": "plus een {{ setupFee }} instelkosten",
+  "perUnitIncluded": "({{included}} inbegrepen)",
+  "featuresLabel": "Functies",
+  "detailsLabel": "Details",
+  "planPickerLabel": "Kies uw voorkeursplan",
+  "planCardLabel": "Beheer uw plan",
+  "planPickerAlertErrorTitle": "Fout bij afrekenverzoek",
+  "planPickerAlertErrorDescription": "Er is een fout opgetreden bij het afrekenverzoek. Probeer het later opnieuw.",
+  "subscriptionCancelled": "Abonnement geannuleerd",
+  "cancelSubscriptionDate": "Uw abonnement wordt aan het einde van de periode geannuleerd",
+  "noPlanChosen": "Kies een plan",
+  "noIntervalPlanChosen": "Kies een factureringsinterval",
+  "status": {
+    "free": {
+      "badge": "Gratis plan",
+      "heading": "U gebruikt momenteel het gratis plan",
+      "description": "U gebruikt een gratis plan. U kunt op elk moment upgraden naar een betaald plan."
+    },
+    "active": {
+      "badge": "Actief",
+      "heading": "Uw abonnement is actief",
+      "description": "Uw abonnement is actief. U kunt uw abonnement en facturering beheren in het klantenportal."
+    },
+    "trialing": {
+      "badge": "Proefperiode",
+      "heading": "U gebruikt een proefperiode",
+      "description": "U kunt genieten van de voordelen van het plan tot de proefperiode eindigt"
+    },
+    "past_due": {
+      "badge": "Achterstallig",
+      "heading": "Uw factuur is achterstallig",
+      "description": "Uw factuur is achterstallig. Werk uw betaalmethode bij."
+    },
+    "canceled": {
+      "badge": "Geannuleerd",
+      "heading": "Uw abonnement is geannuleerd",
+      "description": "Uw abonnement is geannuleerd. Het is gepland om te eindigen aan het einde van de factureringsperiode."
+    },
+    "unpaid": {
+      "badge": "Onbetaald",
+      "heading": "Uw factuur is onbetaald",
+      "description": "Uw factuur is onbetaald. Werk uw betaalmethode bij."
+    },
+    "incomplete": {
+      "badge": "Onvolledig",
+      "heading": "We wachten op uw betaling",
+      "description": "We wachten tot uw betaling wordt verwerkt. Even geduld."
+    },
+    "incomplete_expired": {
+      "badge": "Verlopen",
+      "heading": "Uw betaling is verlopen",
+      "description": "Uw betaling is verlopen. Werk uw betaalmethode bij."
+    },
+    "paused": {
+      "badge": "Gepauzeerd",
+      "heading": "Uw abonnement is gepauzeerd",
+      "description": "Uw abonnement is gepauzeerd. U kunt het op elk moment hervatten."
+    },
+    "succeeded": {
+      "badge": "Geslaagd",
+      "heading": "Uw betaling was succesvol",
+      "description": "Uw betaling was succesvol. Bedankt voor uw abonnement!"
+    },
+    "pending": {
+      "badge": "In behandeling",
+      "heading": "Uw betaling is in behandeling",
+      "description": "Uw betaling is in behandeling. Even geduld."
+    },
+    "failed": {
+      "badge": "Mislukt",
+      "heading": "Uw betaling is mislukt",
+      "description": "Uw betaling is mislukt. Werk uw betaalmethode bij."
+    }
+  }
+}

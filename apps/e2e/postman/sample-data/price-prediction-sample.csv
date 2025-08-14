@@ -1,0 +1,16 @@
+date,fuel_type,price_usd_per_ton,port,market_conditions,demand_level,supply_level
+2023-01-01,diesel,650,Rotterdam,stable,high,medium
+2023-01-02,diesel,655,Rotterdam,stable,high,medium
+2023-01-03,diesel,660,Rotterdam,rising,high,low
+2023-01-04,diesel,665,Rotterdam,rising,high,low
+2023-01-05,diesel,670,Rotterdam,rising,medium,low
+2023-01-06,diesel,675,Rotterdam,rising,medium,low
+2023-01-07,diesel,680,Rotterdam,stable,medium,medium
+2023-01-08,diesel,685,Rotterdam,stable,medium,medium
+2023-01-09,diesel,690,Rotterdam,falling,low,high
+2023-01-10,diesel,685,Rotterdam,falling,low,high
+2023-01-11,diesel,680,Rotterdam,falling,low,high
+2023-01-12,diesel,675,Rotterdam,stable,low,medium
+2023-01-13,diesel,670,Rotterdam,stable,low,medium
+2023-01-14,diesel,665,Rotterdam,stable,medium,medium
+2023-01-15,diesel,660,Rotterdam,stable,medium,medium
