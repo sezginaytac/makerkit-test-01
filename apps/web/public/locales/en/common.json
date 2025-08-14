@@ -99,6 +99,14 @@
   "capacityTons": "Capacity (tons)",
   "fuelConsumptionRate": "Fuel Consumption Rate",
   "fuelConsumptionRateTonsPerDay": "Fuel Consumption Rate (tons/day)",
+  "fuelTypes": "Fuel Types",
+  "fuelTypesDescription": "Select the fuel types this ship can use",
+  "fuelTypesRequired": "Please select at least one fuel type",
+  "fuelTypesOptions": {
+    "hfo": "HFO (Heavy Fuel Oil)",
+    "vlsfo": "VLSFO (Very Low Sulphur Fuel Oil)",
+    "ulsfo": "ULSFO (Ultra Low Sulphur Fuel Oil)"
+  },
   "searchShips": "Search ships by name, IMO number, or vessel type...",
   "filters": "Filters",
   "loadingShips": "Loading ships...",

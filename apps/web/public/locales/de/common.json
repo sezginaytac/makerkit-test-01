@@ -99,6 +99,14 @@
   "capacityTons": "Kapazität (Tonnen)",
   "fuelConsumptionRate": "Kraftstoffverbrauch",
   "fuelConsumptionRateTonsPerDay": "Kraftstoffverbrauch (Tonnen/Tag)",
+  "fuelTypes": "Kraftstoffarten",
+  "fuelTypesDescription": "Wählen Sie die Kraftstoffarten aus, die dieses Schiff verwenden kann",
+  "fuelTypesRequired": "Bitte wählen Sie mindestens eine Kraftstoffart aus",
+  "fuelTypesOptions": {
+    "hfo": "HFO (Schweröl)",
+    "vlsfo": "VLSFO (Schwefelarmes Schweröl)",
+    "ulsfo": "ULSFO (Ultra-Schwefelarmes Schweröl)"
+  },
   "searchShips": "Suchen Sie Schiffe nach Name, IMO-Nummer oder Schiffstyp...",
   "filters": "Filter",
   "loadingShips": "Schiffe werden geladen...",

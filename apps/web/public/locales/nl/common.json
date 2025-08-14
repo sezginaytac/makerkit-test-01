@@ -235,6 +235,14 @@
   "capacityTons": "Capaciteit (ton)",
   "fuelConsumptionRate": "Brandstofverbruik",
   "fuelConsumptionRateTonsPerDay": "Brandstofverbruik (ton/dag)",
+  "fuelTypes": "Brandstoftypes",
+  "fuelTypesDescription": "Selecteer de brandstoftypes die dit schip kan gebruiken",
+  "fuelTypesRequired": "Selecteer ten minste één brandstoftype",
+  "fuelTypesOptions": {
+    "hfo": "HFO (Zware Stookolie)",
+    "vlsfo": "VLSFO (Zeer Zwavelarme Stookolie)",
+    "ulsfo": "ULSFO (Ultra Zwavelarme Stookolie)"
+  },
   "searchShips": "Zoek schepen op naam, IMO nummer of scheepstype...",
   "filters": "Filters",
   "loadingShips": "Schepen laden...",

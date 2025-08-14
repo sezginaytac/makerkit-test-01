@@ -121,19 +121,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate fuel_types if provided
-    if (fuel_types && typeof fuel_types === 'string') {
-      const validFuelTypes = ['HFO', 'VLSFO', 'MGO'];
-      const providedFuelTypes = fuel_types.split(',').map(t => t.trim());
-      const invalidFuelTypes = providedFuelTypes.filter(t => !validFuelTypes.includes(t));
-      
-      if (invalidFuelTypes.length > 0) {
-        return NextResponse.json(
-          { error: `Invalid fuel types: ${invalidFuelTypes.join(', ')}. Valid types are: ${validFuelTypes.join(', ')}` },
-          { status: 400 }
-        );
-      }
-    }
+                 // Validate fuel_types if provided
+             if (fuel_types && typeof fuel_types === 'string') {
+               const validFuelTypes = ['HFO', 'VLSFO', 'ULSFO'];
+               const providedFuelTypes = fuel_types.split(',').map(t => t.trim());
+               const invalidFuelTypes = providedFuelTypes.filter(t => !validFuelTypes.includes(t));
+               
+               if (invalidFuelTypes.length > 0) {
+                 return NextResponse.json(
+                   { error: `Invalid fuel types: ${invalidFuelTypes.join(', ')}. Valid types are: ${validFuelTypes.join(', ')}` },
+                   { status: 400 }
+                 );
+               }
+             }
 
     // Check if ship already exists
     const { data: existingShip } = await supabase
@@ -154,7 +154,7 @@ export async function POST(request: NextRequest) {
     const shipData: any = { 
       name: shipName,
       account_id: accountId || user.id, // Use provided accountId or fallback to user.id
-      fuel_types: fuel_types || 'HFO,VLSFO,MGO', // Default to all fuel types if not provided
+                     fuel_types: fuel_types || 'HFO,VLSFO,ULSFO', // Default to all fuel types if not provided
       created_by: user.id,
       updated_by: user.id
     };

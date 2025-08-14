@@ -60,7 +60,7 @@ export type Ship = {
   vessel_type?: string;
   capacity?: number;
   fuel_consumption_rate?: number;
-  fuel_types: string; // Comma-separated fuel types (HFO,VLSFO,MGO)
+  fuel_types: string; // Comma-separated fuel types (HFO,VLSFO,ULSFO)
   is_active?: boolean;
   account_id: string;
   created_at: string;

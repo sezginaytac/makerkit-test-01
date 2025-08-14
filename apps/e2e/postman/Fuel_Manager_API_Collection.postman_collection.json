@@ -385,7 +385,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Test Ship\",\n  \"imoNumber\": \"IMO1234567\",\n  \"vesselType\": \"Container\",\n  \"capacity\": 5000,\n  \"fuelConsumptionRate\": 25.5,\n  \"fuel_types\": \"HFO,VLSFO,MGO\"\n}"
+							"raw": "{\n  \"name\": \"Test Ship\",\n  \"imoNumber\": \"IMO1234567\",\n  \"vesselType\": \"Container\",\n  \"capacity\": 5000,\n  \"fuelConsumptionRate\": 25.5,\n  \"fuel_types\": \"HFO,VLSFO,ULSFO\"\n}"
 						},
 						"url": {
 							"raw": "{{app_url}}/api/fuel-manager/ships",
@@ -487,7 +487,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Updated Test Ship\",\n  \"imoNumber\": \"IMO1234567\",\n  \"vesselType\": \"Bulk Carrier\",\n  \"capacity\": 10000,\n  \"fuelConsumptionRate\": 30.0,\n  \"fuel_types\": \"HFO,MGO\"\n}"
+							"raw": "{\n  \"name\": \"Updated Test Ship\",\n  \"imoNumber\": \"IMO1234567\",\n  \"vesselType\": \"Bulk Carrier\",\n  \"capacity\": 10000,\n  \"fuelConsumptionRate\": 30.0,\n  \"fuel_types\": \"HFO,ULSFO\"\n}"
 						},
 						"url": {
 							"raw": "{{app_url}}/api/fuel-manager/ships/{{ship_id}}",
@@ -577,7 +577,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"VLSFO MGO Ship\",\n  \"imoNumber\": \"IMO9876543\",\n  \"vesselType\": \"Container\",\n  \"capacity\": 15000,\n  \"fuelConsumptionRate\": 35.0,\n  \"fuel_types\": \"VLSFO,MGO\"\n}"
+							"raw": "{\n  \"name\": \"VLSFO ULSFO Ship\",\n  \"imoNumber\": \"IMO9876543\",\n  \"vesselType\": \"Container\",\n  \"capacity\": 15000,\n  \"fuelConsumptionRate\": 35.0,\n  \"fuel_types\": \"VLSFO,ULSFO\"\n}"
 						},
 						"url": {
 							"raw": "{{app_url}}/api/fuel-manager/ships",

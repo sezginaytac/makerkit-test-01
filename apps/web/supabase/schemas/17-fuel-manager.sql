@@ -69,11 +69,22 @@ CREATE TABLE IF NOT EXISTS public.ships (
   vessel_type VARCHAR(100),
   capacity DECIMAL(10,2),
   fuel_consumption_rate DECIMAL(8,2),
+  fuel_types TEXT NOT NULL DEFAULT 'HFO,VLSFO,ULSFO',
   is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
   created_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
   updated_by UUID REFERENCES auth.users(id) ON DELETE SET NULL
+);
+
+-- Add comment to explain the fuel_types column
+COMMENT ON COLUMN public.ships.fuel_types IS 'Comma-separated list of fuel types (HFO, VLSFO, ULSFO)';
+
+-- Create a check constraint to ensure valid fuel types
+ALTER TABLE public.ships 
+ADD CONSTRAINT ships_fuel_types_check 
+CHECK (
+  fuel_types ~ '^(HFO|VLSFO|ULSFO)(,(HFO|VLSFO|ULSFO))*$'
 );
 
 -- Customers

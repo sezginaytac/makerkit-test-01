@@ -99,6 +99,14 @@
   "capacityTons": "Kapasite (ton)",
   "fuelConsumptionRate": "Yakıt Tüketimi",
   "fuelConsumptionRateTonsPerDay": "Yakıt Tüketimi (ton/gün)",
+  "fuelTypes": "Yakıt Türleri",
+  "fuelTypesDescription": "Bu geminin kullanabileceği yakıt türlerini seçin",
+  "fuelTypesRequired": "Lütfen en az bir yakıt türü seçin",
+  "fuelTypesOptions": {
+    "hfo": "HFO (Ağır Yakıt Yağı)",
+    "vlsfo": "VLSFO (Çok Düşük Kükürtlü Yakıt Yağı)",
+    "ulsfo": "ULSFO (Ultra Düşük Kükürtlü Yakıt Yağı)"
+  },
   "searchShips": "Gemi adı, IMO numarası veya gemi tipine göre ara...",
   "filters": "Filtreler",
   "loadingShips": "Gemiler yükleniyor...",

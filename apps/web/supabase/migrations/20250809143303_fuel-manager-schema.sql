@@ -118,10 +118,21 @@ create table "public"."ships" (
   "vessel_type" text,
   "capacity" numeric(10,2),
   "fuel_consumption_rate" numeric(8,2),
+  "fuel_types" text not null default 'HFO,VLSFO,ULSFO',
     "created_at" timestamp with time zone not null default now(),
     "updated_at" timestamp with time zone not null default now(),
   "created_by" uuid not null,
   "updated_by" uuid not null
+);
+
+-- Add comment to explain the fuel_types column
+COMMENT ON COLUMN public.ships.fuel_types IS 'Comma-separated list of fuel types (HFO, VLSFO, ULSFO)';
+
+-- Create a check constraint to ensure valid fuel types
+ALTER TABLE public.ships 
+ADD CONSTRAINT ships_fuel_types_check 
+CHECK (
+  fuel_types ~ '^(HFO|VLSFO|ULSFO)(,(HFO|VLSFO|ULSFO))*$'
 );
 
 -- Create price prediction files table

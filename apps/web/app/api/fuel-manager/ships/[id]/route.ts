@@ -133,19 +133,19 @@ export async function PUT(
       );
     }
 
-    // Validate fuel_types if provided
-    if (fuel_types && typeof fuel_types === 'string') {
-      const validFuelTypes = ['HFO', 'VLSFO', 'MGO'];
-      const providedFuelTypes = fuel_types.split(',').map(t => t.trim());
-      const invalidFuelTypes = providedFuelTypes.filter(t => !validFuelTypes.includes(t));
-      
-      if (invalidFuelTypes.length > 0) {
-        return NextResponse.json(
-          { error: `Invalid fuel types: ${invalidFuelTypes.join(', ')}. Valid types are: ${validFuelTypes.join(', ')}` },
-          { status: 400 }
-        );
-      }
-    }
+                 // Validate fuel_types if provided
+             if (fuel_types && typeof fuel_types === 'string') {
+               const validFuelTypes = ['HFO', 'VLSFO', 'ULSFO'];
+               const providedFuelTypes = fuel_types.split(',').map(t => t.trim());
+               const invalidFuelTypes = providedFuelTypes.filter(t => !validFuelTypes.includes(t));
+               
+               if (invalidFuelTypes.length > 0) {
+                 return NextResponse.json(
+                   { error: `Invalid fuel types: ${invalidFuelTypes.join(', ')}. Valid types are: ${validFuelTypes.join(', ')}` },
+                   { status: 400 }
+                 );
+               }
+             }
 
     // Check if ship exists and belongs to the user's team
     const targetAccountId = accountId || user.id;

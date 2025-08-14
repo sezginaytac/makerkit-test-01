@@ -413,21 +413,21 @@ export function ShipsPageContent({ accountId }: ShipsPageContentProps) {
                </div>
              </div>
              
-             {/* Fuel Types */}
-             {fuelTypes.length > 0 && (
-               <div className="mb-4">
-                 <span className="text-sm font-medium text-foreground mb-2 block">
-                   Fuel Types:
-                 </span>
-                 <div className="flex flex-wrap gap-1">
-                   {fuelTypes.map((fuelType) => (
-                     <Badge key={fuelType} variant="outline" className="text-xs">
-                       {fuelType}
-                     </Badge>
-                   ))}
-                 </div>
-               </div>
-             )}
+                                  {/* Fuel Types */}
+                     {fuelTypes.length > 0 && (
+                       <div className="mb-4">
+                         <span className="text-sm font-medium text-foreground mb-2 block">
+                           <Trans i18nKey="common:fuelTypes" defaults="Fuel Types" />:
+                         </span>
+                         <div className="flex flex-wrap gap-1">
+                           {fuelTypes.map((fuelType) => (
+                             <Badge key={fuelType} variant="outline" className="text-xs">
+                               {fuelType}
+                             </Badge>
+                           ))}
+                         </div>
+                       </div>
+                     )}
              
              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
                {ship.vessel_type && (
@@ -503,11 +503,11 @@ export function ShipsPageContent({ accountId }: ShipsPageContentProps) {
 
   const [selectedFuelTypes, setSelectedFuelTypes] = useState<string[]>(existingFuelTypes);
 
-  const fuelTypeOptions = [
-    { value: 'HFO', label: 'HFO (Heavy Fuel Oil)' },
-    { value: 'VLSFO', label: 'VLSFO (Very Low Sulphur Fuel Oil)' },
-    { value: 'MGO', label: 'MGO (Marine Gas Oil)' },
-  ];
+             const fuelTypeOptions = [
+             { value: 'HFO', label: <Trans i18nKey="common:fuelTypesOptions.hfo" defaults="HFO (Heavy Fuel Oil)" /> },
+             { value: 'VLSFO', label: <Trans i18nKey="common:fuelTypesOptions.vlsfo" defaults="VLSFO (Very Low Sulphur Fuel Oil)" /> },
+             { value: 'ULSFO', label: <Trans i18nKey="common:fuelTypesOptions.ulsfo" defaults="ULSFO (Ultra Low Sulphur Fuel Oil)" /> },
+           ];
 
   const handleFuelTypeChange = (fuelType: string, checked: boolean) => {
     if (checked) {
@@ -520,11 +520,11 @@ export function ShipsPageContent({ accountId }: ShipsPageContentProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate that at least one fuel type is selected
-    if (selectedFuelTypes.length === 0) {
-      alert('Please select at least one fuel type');
-      return;
-    }
+                 // Validate that at least one fuel type is selected
+             if (selectedFuelTypes.length === 0) {
+               alert(t('common:fuelTypesRequired'));
+               return;
+             }
     
     onSubmit({
       ...formData,
@@ -603,31 +603,33 @@ export function ShipsPageContent({ accountId }: ShipsPageContentProps) {
         </div>
       </div>
 
-      {/* Fuel Types Section */}
-      <div className="space-y-3">
-        <Label className="text-base font-medium">
-          Fuel Types *
-        </Label>
-        <div className="space-y-2">
-          {fuelTypeOptions.map((option) => (
-            <div key={option.value} className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id={`fuel-type-${option.value}`}
-                checked={selectedFuelTypes.includes(option.value)}
-                onChange={(e) => handleFuelTypeChange(option.value, e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-              />
-              <Label htmlFor={`fuel-type-${option.value}`} className="text-sm font-normal">
-                {option.label}
-              </Label>
-            </div>
-          ))}
-        </div>
-        {selectedFuelTypes.length === 0 && (
-          <p className="text-sm text-red-600">Please select at least one fuel type</p>
-        )}
-      </div>
+                     {/* Fuel Types Section */}
+               <div className="space-y-3">
+                 <Label className="text-base font-medium">
+                   <Trans i18nKey="common:fuelTypes" defaults="Fuel Types" /> *
+                 </Label>
+                 <div className="space-y-2">
+                   {fuelTypeOptions.map((option) => (
+                     <div key={option.value} className="flex items-center space-x-2">
+                       <input
+                         type="checkbox"
+                         id={`fuel-type-${option.value}`}
+                         checked={selectedFuelTypes.includes(option.value)}
+                         onChange={(e) => handleFuelTypeChange(option.value, e.target.checked)}
+                         className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                       />
+                       <Label htmlFor={`fuel-type-${option.value}`} className="text-sm font-normal">
+                         {option.label}
+                       </Label>
+                     </div>
+                   ))}
+                 </div>
+                 {selectedFuelTypes.length === 0 && (
+                   <p className="text-sm text-red-600">
+                     <Trans i18nKey="common:fuelTypesRequired" defaults="Please select at least one fuel type" />
+                   </p>
+                 )}
+               </div>
 
       <div className="flex justify-end space-x-2 pt-4">
         <Button type="button" variant="outline" onClick={onCancel}>
