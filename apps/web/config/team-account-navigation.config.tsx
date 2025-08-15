@@ -9,6 +9,7 @@ import {
   TrendingUp,
   BarChart3,
   Calculator,
+  Fuel,
 } from 'lucide-react';
 
 import { NavigationConfigSchema } from '@kit/ui/navigation-schema';
@@ -44,6 +45,12 @@ const getRoutes = (account: string) => [
         label: 'common:fuelManager.shipInventory',
         path: `/home/${account}/ships`,
         Icon: <Ship className={iconClasses} />,
+        requiredRole: 'owner',
+      },
+      {
+        label: 'common:fuelManager.fuelInventory',
+        path: `/home/${account}/fuel-inventory`,
+        Icon: <Fuel className={iconClasses} />,
         requiredRole: 'owner',
       },
       {

@@ -1,191 +1,122 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseServerClient } from '@kit/supabase/server-client';
 
-// GET /api/fuel-manager/ports - Get all ports
-export async function GET(request: NextRequest) {
+// POST /api/fuel-manager/ports - Create new port entry
+export async function POST(request: NextRequest) {
   try {
-    console.log('=== Ports GET API Debug ===');
-    console.log('Request headers:', Object.fromEntries(request.headers.entries()));
-    console.log('Request cookies:', request.cookies.getAll());
-    
-    // Try to get JWT token from Authorization header first
-    const authHeader = request.headers.get('authorization');
-    let supabase;
-    
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      console.log('Using Authorization header for authentication');
-      const token = authHeader.substring(7);
-      
-      // Create client with JWT token
-      const { createClient } = await import('@supabase/supabase-js');
-      supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-          global: {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        }
-      );
-    } else {
-      console.log('Using cookie-based authentication');
-      supabase = getSupabaseServerClient();
-    }
+    const supabase = getSupabaseServerClient();
     
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser();
-    console.log('Auth result - user:', user ? 'exists' : 'null');
-    console.log('Auth result - error:', authError);
     
     if (authError || !user) {
-      console.log('Authentication failed - returning 401');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get all ports for the user
+    const body = await request.json();
+    const { ship_id, port_name, eta_date, accountId } = body;
+
+    // Validate required fields
+    if (!ship_id || !port_name || !eta_date || !accountId) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    // Validate that user has access to this account
+    const { data: membership, error: membershipError } = await supabase
+      .from('accounts_memberships')
+      .select('*')
+      .eq('account_id', accountId)
+      .eq('user_id', user.id)
+      .single();
+
+    if (membershipError || !membership) {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+    }
+
+    // Validate that the ship belongs to the account
+    const { data: ship, error: shipError } = await supabase
+      .from('ships')
+      .select('id')
+      .eq('id', ship_id)
+      .eq('account_id', accountId)
+      .single();
+
+    if (shipError || !ship) {
+      return NextResponse.json({ error: 'Ship not found or access denied' }, { status: 404 });
+    }
+
+    // Create new port entry
+    const { data, error } = await supabase
+      .from('ports')
+      .insert({
+        account_id: accountId,
+        ship_id,
+        port_name,
+        eta_date: new Date(eta_date).toISOString(),
+        created_by: user.id,
+        updated_by: user.id,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      return NextResponse.json({ error: 'Failed to create port entry' }, { status: 500 });
+    }
+
+    return NextResponse.json(data);
+  } catch (error) {
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+// GET /api/fuel-manager/ports - Get all ports for account
+export async function GET(request: NextRequest) {
+  try {
+    const supabase = getSupabaseServerClient();
+    
+    // Get current user
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Get accountId from query params
+    const { searchParams } = new URL(request.url);
+    const accountId = searchParams.get('accountId');
+
+    if (!accountId) {
+      return NextResponse.json({ error: 'accountId is required' }, { status: 400 });
+    }
+
+    // Validate that user has access to this account
+    const { data: membership, error: membershipError } = await supabase
+      .from('accounts_memberships')
+      .select('*')
+      .eq('account_id', accountId)
+      .eq('user_id', user.id)
+      .single();
+
+    if (membershipError || !membership) {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+    }
+
+    // Get all ports for the account
     const { data: ports, error } = await supabase
       .from('ports')
       .select(`
         *,
-        ships(name)
+        ships(name, imo_number)
       `)
-      .eq('account_id', user.id)
-      .order('port_name', { ascending: true });
+      .eq('account_id', accountId)
+      .order('eta_date', { ascending: true });
 
     if (error) {
-      console.error('Error fetching ports:', error);
       return NextResponse.json({ error: 'Failed to fetch ports' }, { status: 500 });
     }
 
     return NextResponse.json(ports || []);
   } catch (error) {
-    console.error('Error in GET /api/fuel-manager/ports:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-  }
-}
-
-// POST /api/fuel-manager/ports - Create a new port
-export async function POST(request: NextRequest) {
-  try {
-    console.log('=== Ports POST API Debug ===');
-    console.log('Request headers:', Object.fromEntries(request.headers.entries()));
-    console.log('Request cookies:', request.cookies.getAll());
-    
-    // Try to get JWT token from Authorization header first
-    const authHeader = request.headers.get('authorization');
-    let supabase;
-    
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      console.log('Using Authorization header for authentication');
-      const token = authHeader.substring(7);
-      
-      // Create client with JWT token
-      const { createClient } = await import('@supabase/supabase-js');
-      supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-          global: {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        }
-      );
-    } else {
-      console.log('Using cookie-based authentication');
-      supabase = getSupabaseServerClient();
-    }
-    
-    // Get current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    console.log('Auth result - user:', user ? 'exists' : 'null');
-    console.log('Auth result - error:', authError);
-    
-    if (authError || !user) {
-      console.log('Authentication failed - returning 401');
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const body = await request.json();
-    const { shipId, portName, etaDate } = body;
-
-    if (!shipId || !portName) {
-      return NextResponse.json(
-        { error: 'Ship ID and port name are required' },
-        { status: 400 }
-      );
-    }
-
-    // Check if ship exists
-    const { data: existingShip } = await supabase
-      .from('ships')
-      .select('id')
-      .eq('id', shipId)
-      .eq('account_id', user.id)
-      .single();
-
-    if (!existingShip) {
-      return NextResponse.json(
-        { error: 'Ship not found' },
-        { status: 404 }
-      );
-    }
-
-    // Check if port already exists for this ship
-    const { data: existingPort } = await supabase
-      .from('ports')
-      .select('id')
-      .eq('port_name', portName)
-      .eq('ship_id', shipId)
-      .single();
-
-    if (existingPort) {
-      return NextResponse.json(
-        { error: 'Port already exists for this ship' },
-        { status: 400 }
-      );
-    }
-
-    // Create new port
-    const portData: any = {
-      ship_id: shipId,
-      port_name: portName,
-      account_id: user.id,
-      created_by: user.id,
-      updated_by: user.id
-    };
-
-    // Add optional fields
-    if (etaDate) {
-      portData.eta_date = etaDate;
-    }
-
-    const { data: port, error } = await supabase
-      .from('ports')
-      .insert(portData)
-      .select(`
-        *,
-        ships(name)
-      `)
-      .single();
-
-    if (error) {
-      console.error('Error creating port:', error);
-      return NextResponse.json({ error: 'Failed to create port' }, { status: 500 });
-    }
-
-    return NextResponse.json({ 
-      message: 'Port created successfully',
-      port 
-    });
-  } catch (error) {
-    console.error('Error in POST /api/fuel-manager/ports:', error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to create port' },
-      { status: 500 }
-    );
   }
 }

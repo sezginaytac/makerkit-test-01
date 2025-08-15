@@ -129,14 +129,17 @@ test.describe('Data CRUD Operations', () => {
     });
   });
 
-  test.describe('Fuel Inventory Data Operations', () => {
-    test('should handle fuel inventory calculation and save', async ({ request }) => {
-      const response = await request.post('/api/fuel-manager/fuel-inventory/calculate-and-save', {
+  test.describe('Fuel Inventory Operations', () => {
+    test('should handle fuel inventory data creation', async ({ request }) => {
+      const response = await request.post('/api/fuel-manager/fuel-inventory', {
         data: {
-          fuelType: 'diesel',
-          quantity: 1000,
-          port: 'Rotterdam',
-          ship: 'Test Ship'
+          ship_id: 'test-ship-id',
+          fuel_type: 'HFO',
+          rob: 100.5,
+          me: 25.0,
+          ae: 10.0,
+          boiler: 5.0,
+          accountId: 'test-account-id'
         }
       });
       
@@ -145,46 +148,68 @@ test.describe('Data CRUD Operations', () => {
       
       if (response.status() === 500) {
         const body = await response.json();
-        console.log('Fuel inventory save error:', body.error);
+        console.log('Fuel inventory creation error:', body.error);
         expect(body.error).toBeDefined();
       }
     });
 
-    test('should handle fuel types retrieval', async ({ request }) => {
-      const response = await request.get('/api/fuel-manager/fuel-inventory/fuel-types');
+    test('should handle fuel inventory data retrieval', async ({ request }) => {
+      const response = await request.get('/api/fuel-manager/fuel-inventory');
       
       // We expect either 401 (unauthorized) or 500 (server error due to missing tables)
       expect([401, 500]).toContain(response.status());
       
       if (response.status() === 500) {
         const body = await response.json();
-        console.log('Fuel types error:', body.error);
+        console.log('Fuel inventory retrieval error:', body.error);
         expect(body.error).toBeDefined();
       }
     });
 
-    test('should handle port names retrieval', async ({ request }) => {
-      const response = await request.get('/api/fuel-manager/fuel-inventory/port-names');
+    test('should handle fuel inventory data retrieval for specific ship', async ({ request }) => {
+      const response = await request.get('/api/fuel-manager/fuel-inventory/test-ship-id');
+      
+      // We expect either 401 (unauthorized), 404 (not found), or 500 (server error)
+      expect([401, 404, 500]).toContain(response.status());
+      
+      if (response.status() === 500) {
+        const body = await response.json();
+        console.log('Fuel inventory ship-specific retrieval error:', body.error);
+        expect(body.error).toBeDefined();
+      }
+    });
+  });
+
+  test.describe('Port Operations', () => {
+    test('should handle port creation', async ({ request }) => {
+      const response = await request.post('/api/fuel-manager/ports', {
+        data: {
+          ship_id: 'test-ship-id',
+          port_name: 'Test Port',
+          eta_date: new Date().toISOString(),
+          accountId: 'test-account-id'
+        }
+      });
       
       // We expect either 401 (unauthorized) or 500 (server error due to missing tables)
       expect([401, 500]).toContain(response.status());
       
       if (response.status() === 500) {
         const body = await response.json();
-        console.log('Port names error:', body.error);
+        console.log('Port creation error:', body.error);
         expect(body.error).toBeDefined();
       }
     });
 
-    test('should handle ship names retrieval', async ({ request }) => {
-      const response = await request.get('/api/fuel-manager/fuel-inventory/ships-names');
+    test('should handle port retrieval', async ({ request }) => {
+      const response = await request.get('/api/fuel-manager/ports');
       
       // We expect either 401 (unauthorized) or 500 (server error due to missing tables)
       expect([401, 500]).toContain(response.status());
       
       if (response.status() === 500) {
         const body = await response.json();
-        console.log('Ship names error:', body.error);
+        console.log('Port retrieval error:', body.error);
         expect(body.error).toBeDefined();
       }
     });

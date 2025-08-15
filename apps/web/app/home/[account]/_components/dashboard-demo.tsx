@@ -19,32 +19,39 @@ export function DashboardDemo({ account }: DashboardDemoProps) {
       color: 'bg-blue-500',
     },
     {
+      title: <Trans i18nKey="common:fuelManager.fuelInventory" defaults="Fuel Inventory" />,
+      description: <Trans i18nKey="common:fuelManager.fuelInventoryDescription" defaults="Manage fuel inventory and consumption data for ships" />,
+      icon: <Fuel className="h-8 w-8" />,
+      href: `/home/${account}/fuel-inventory`,
+      color: 'bg-green-500',
+    },
+    {
       title: <Trans i18nKey="common:fuelManager.fuelQuality" defaults="Fuel Quality" />,
       description: <Trans i18nKey="common:fuelManager.fuelQualityDescription" defaults="Upload and analyze fuel quality data files" />,
       icon: <Database className="h-8 w-8" />,
       href: `/home/${account}/fuel-quality`,
-      color: 'bg-green-500',
+      color: 'bg-purple-500',
     },
     {
       title: <Trans i18nKey="common:fuelManager.pricePrediction" defaults="Price Prediction" />,
       description: <Trans i18nKey="common:fuelManager.pricePredictionDescription" defaults="Upload and process price prediction models" />,
       icon: <TrendingUp className="h-8 w-8" />,
       href: `/home/${account}/price-prediction`,
-      color: 'bg-purple-500',
+      color: 'bg-orange-500',
     },
     {
       title: <Trans i18nKey="common:fuelManager.supplyDemand" defaults="Supply & Demand" />,
       description: <Trans i18nKey="common:fuelManager.supplyDemandDescription" defaults="Monitor supply and demand market data" />,
       icon: <BarChart3 className="h-8 w-8" />,
       href: `/home/${account}/supply-demand`,
-      color: 'bg-orange-500',
+      color: 'bg-red-500',
     },
     {
       title: <Trans i18nKey="common:fuelManager.procurementDecisions" defaults="Procurement Decisions" />,
       description: <Trans i18nKey="common:fuelManager.procurementDecisionsDescription" defaults="Get AI-powered procurement recommendations" />,
       icon: <Calculator className="h-8 w-8" />,
       href: `/home/${account}/procurement`,
-      color: 'bg-red-500',
+      color: 'bg-indigo-500',
     },
   ];
 
