@@ -14,6 +14,11 @@ import { toast } from '@kit/ui/sonner';
 import { Save, Plus, Fuel } from 'lucide-react';
 import { fuelManagerConfig } from '~/config/fuel-manager.config';
 import Decimal from 'decimal.js';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@kit/ui/form';
+import { FuelDataSchema, PortDataSchema, type FuelDataForm, type PortDataForm } from '../_lib/schema/fuel-inventory.schema';
+import { ShipForm } from '../../ships/_components/ships-page-content';
 
 // Utility function for exact mathematical calculations
 const calculateExactSum = (...values: number[]): number => {
@@ -64,6 +69,20 @@ export function FuelInventoryPageContent({ accountId }: FuelInventoryPageContent
   const [selectedShipId, setSelectedShipId] = useState<string>('');
   const [selectedPortId, setSelectedPortId] = useState<string>('');
   const [isAddPortDialogOpen, setIsAddPortDialogOpen] = useState(false);
+  const [isAddShipDialogOpen, setIsAddShipDialogOpen] = useState(false);
+
+  // Reset form when dialog opens
+  const handleAddPortDialogOpen = (open: boolean) => {
+    setIsAddPortDialogOpen(open);
+    if (open) {
+      // Reset port form when opening
+      setSelectedPortId('');
+    }
+  };
+
+  const handleAddShipDialogOpen = (open: boolean) => {
+    setIsAddShipDialogOpen(open);
+  };
   const [fuelDataByType, setFuelDataByType] = useState<FuelDataByType>({});
 
   // Fetch ships
@@ -196,13 +215,59 @@ export function FuelInventoryPageContent({ accountId }: FuelInventoryPageContent
     });
   };
 
-  const handleSaveFuelData = () => {
+  const isFormValid = useMemo(() => {
+    if (!selectedShipId || !selectedPortId) {
+      return false;
+    }
+
+    // Check if all fuel data has valid values
+    const fuelDataArray = Object.values(fuelDataByType);
+    return fuelDataArray.every(fuelData => 
+      fuelData.me > 0 && fuelData.ae > 0 && fuelData.boiler > 0
+    );
+  }, [selectedShipId, selectedPortId, fuelDataByType]);
+
+  const validateFuelData = () => {
     if (!selectedShipId) {
-      toast.error(t('common:fuelInventory.selectShipFirst'));
+      toast.error(t('common:validation.shipRequired'));
+      return false;
+    }
+
+    if (!selectedPortId) {
+      toast.error(t('common:validation.portNameRequired'));
+      return false;
+    }
+
+    // Validate fuel data
+    const fuelDataArray = Object.values(fuelDataByType).map(({ total, ...rest }) => ({
+      ...rest,
+      port_id: selectedPortId || null,
+    }));
+
+    // Validate each fuel data entry
+    for (const fuelData of fuelDataArray) {
+      if (fuelData.me <= 0) {
+        toast.error(t('common:validation.meMinValue'));
+        return false;
+      }
+      if (fuelData.ae <= 0) {
+        toast.error(t('common:validation.aeMinValue'));
+        return false;
+      }
+      if (fuelData.boiler <= 0) {
+        toast.error(t('common:validation.boilerMinValue'));
+        return false;
+      }
+    }
+    
+    return true;
+  };
+
+  const handleSaveFuelData = () => {
+    if (!validateFuelData()) {
       return;
     }
     
-    // Remove total from data before sending to API (it's calculated on frontend only)
     const fuelDataArray = Object.values(fuelDataByType).map(({ total, ...rest }) => ({
       ...rest,
       port_id: selectedPortId || null,
@@ -213,12 +278,32 @@ export function FuelInventoryPageContent({ accountId }: FuelInventoryPageContent
 
   const handleAddPort = (portData: { port_name: string; eta_date: string }) => {
     if (!selectedShipId) {
-      toast.error(t('common:fuelInventory.selectShipFirst'));
+      toast.error(t('common:validation.shipRequired'));
       return;
     }
+    
+    // Validate port data
+    if (!portData.port_name.trim()) {
+      toast.error(t('common:validation.portNameRequired'));
+      return;
+    }
+    
+    if (!portData.eta_date) {
+      toast.error(t('common:validation.etaRequired'));
+      return;
+    }
+    
+    // Validate ETA date is not in the past
+    const etaDate = new Date(portData.eta_date);
+    const now = new Date();
+    if (etaDate <= now) {
+      toast.error(t('common:validation.etaFuture'));
+      return;
+    }
+    
     addPortMutation.mutate({
       ship_id: selectedShipId,
-      port_name: portData.port_name,
+      port_name: portData.port_name.trim(),
       eta_date: portData.eta_date,
     });
   };
@@ -226,9 +311,6 @@ export function FuelInventoryPageContent({ accountId }: FuelInventoryPageContent
   // Mutations
   const updateFuelDataMutation = useMutation({
     mutationFn: async (fuelDataArray: Omit<FuelData, 'total'>[]) => {
-      console.log('🔍 Mutation: Starting API call');
-      console.log('🔍 Mutation: Fuel data array:', fuelDataArray);
-      
       const response = await fetch('/api/fuel-manager/fuel-inventory', {
         method: 'POST',
         headers: {
@@ -240,25 +322,20 @@ export function FuelInventoryPageContent({ accountId }: FuelInventoryPageContent
         }),
       });
       
-      console.log('🔍 Mutation: Response status:', response.status);
-      
       if (!response.ok) {
         const errorText = await response.text();
-        console.log('🔍 Mutation: Error response:', errorText);
         throw new Error('Failed to update fuel data');
       }
       
       const result = await response.json();
-      console.log('🔍 Mutation: Success response:', result);
       return result;
     },
     onSuccess: (data) => {
-      console.log('🔍 Mutation: onSuccess called with:', data);
       queryClient.invalidateQueries({ queryKey: ['fuel-inventory', selectedShipId, accountId] });
       toast.success(t('common:fuelInventory.fuelDataUpdated'));
     },
     onError: (error) => {
-      console.error('🔍 Mutation: onError called with:', error);
+      console.error('Error updating fuel data:', error);
       toast.error(t('common:fuelInventory.errorUpdatingFuel'));
     },
   });
@@ -290,8 +367,48 @@ export function FuelInventoryPageContent({ accountId }: FuelInventoryPageContent
       toast.success(t('common:fuelInventory.portAdded'));
     },
     onError: (error) => {
-      console.error('🔍 Add Port Mutation: Error:', error);
+      console.error('Error adding port:', error);
       toast.error(t('common:fuelInventory.errorAddingPort'));
+    },
+  });
+
+  const createShipMutation = useMutation({
+    mutationFn: async (shipData: Partial<Ship>) => {
+      console.log('Creating ship with data:', shipData);
+      console.log('Account ID:', accountId);
+      
+      const response = await fetch('/api/fuel-manager/ships', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...shipData,
+          accountId,
+        }),
+      });
+
+      console.log('Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.log('Error response:', errorText);
+        const error = JSON.parse(errorText);
+        throw new Error(error.error || 'Failed to create ship');
+      }
+
+      const result = await response.json();
+      console.log('Success response:', result);
+      return result;
+    },
+    onSuccess: () => {
+      toast.success(t('common:shipCreatedSuccessfully'));
+      setIsAddShipDialogOpen(false);
+      queryClient.invalidateQueries({ queryKey: ['ships', accountId] });
+    },
+    onError: (error) => {
+      console.error('Error creating ship:', error);
+      toast.error(t('common:errorCreatingShip'));
     },
   });
 
@@ -338,18 +455,54 @@ export function FuelInventoryPageContent({ accountId }: FuelInventoryPageContent
         <CardContent>
           <div className="space-y-4">
             <div>
-              <Select value={selectedShipId} onValueChange={handleShipChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t('common:fuelInventory.selectShipPlaceholder')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {ships.map((ship: Ship) => (
-                    <SelectItem key={ship.id} value={ship.id}>
-                      {ship.name} ({ship.imo_number})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label>
+                <Trans i18nKey="common:fuelInventory.selectShip" />
+              </Label>
+              <div className="flex items-center space-x-4">
+                <div className="flex-1">
+                  <Select value={selectedShipId} onValueChange={handleShipChange}>
+                    <SelectTrigger className={!selectedShipId ? 'border-destructive' : ''}>
+                      <SelectValue placeholder={t('common:fuelInventory.selectShipPlaceholder')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {ships.map((ship: Ship) => (
+                        <SelectItem key={ship.id} value={ship.id}>
+                          {ship.name} ({ship.imo_number})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {!selectedShipId && (
+                    <p className="text-sm text-destructive mt-1">
+                      <Trans i18nKey="common:validation.shipRequired" defaults="Please select a ship" />
+                    </p>
+                  )}
+                </div>
+                <Dialog open={isAddShipDialogOpen} onOpenChange={handleAddShipDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button>
+                      <Plus className="mr-2 h-4 w-4" />
+                      <Trans i18nKey="common:addShip" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[600px]">
+                    <DialogHeader>
+                      <DialogTitle>
+                        <Trans i18nKey="common:addNewShip" />
+                      </DialogTitle>
+                      <DialogDescription>
+                        <Trans i18nKey="common:addShipDescription" />
+                      </DialogDescription>
+                    </DialogHeader>
+                    <ShipForm
+                      key={`add-ship-${isAddShipDialogOpen}`}
+                      onSubmit={(data) => createShipMutation.mutate(data)}
+                      isLoading={createShipMutation.isPending}
+                      onCancel={() => handleAddShipDialogOpen(false)}
+                    />
+                  </DialogContent>
+                </Dialog>
+              </div>
             </div>
 
             {selectedShip && (
@@ -379,7 +532,7 @@ export function FuelInventoryPageContent({ accountId }: FuelInventoryPageContent
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <Select value={selectedPortId} onValueChange={handlePortChange}>
-                    <SelectTrigger>
+                    <SelectTrigger className={!selectedPortId && selectedShipId ? 'border-destructive' : ''}>
                       <SelectValue placeholder={t('common:fuelInventory.selectPortPlaceholder')} />
                     </SelectTrigger>
                     <SelectContent>
@@ -393,8 +546,13 @@ export function FuelInventoryPageContent({ accountId }: FuelInventoryPageContent
                       })()}
                     </SelectContent>
                   </Select>
+                  {!selectedPortId && selectedShipId && (
+                    <p className="text-sm text-destructive mt-1">
+                      <Trans i18nKey="common:validation.portNameRequired" defaults="Port name is required" />
+                    </p>
+                  )}
                 </div>
-                <Dialog open={isAddPortDialogOpen} onOpenChange={setIsAddPortDialogOpen}>
+                <Dialog open={isAddPortDialogOpen} onOpenChange={handleAddPortDialogOpen}>
                   <DialogTrigger asChild>
                     <Button className="ml-4">
                       <Plus className="mr-2 h-4 w-4" />
@@ -402,9 +560,10 @@ export function FuelInventoryPageContent({ accountId }: FuelInventoryPageContent
                     </Button>
                   </DialogTrigger>
                   <AddPortDialog
+                    key={`add-port-${isAddPortDialogOpen}`}
                     onSubmit={handleAddPort}
                     isLoading={addPortMutation.isPending}
-                    onCancel={() => setIsAddPortDialogOpen(false)}
+                    onCancel={() => handleAddPortDialogOpen(false)}
                   />
                 </Dialog>
               </div>
@@ -500,12 +659,31 @@ export function FuelInventoryPageContent({ accountId }: FuelInventoryPageContent
                             type="number"
                             step="0.001"
                             value={fuelData.me}
-                            onChange={(e) => handleFuelDataChange(fuelType, 'me', parseFloat(e.target.value) || 0)}
-                            className="h-8 text-sm"
+                            onChange={(e) => {
+                              const value = parseFloat(e.target.value) || 0;
+                              if (value >= 0) {
+                                handleFuelDataChange(fuelType, 'me', value);
+                              }
+                            }}
+                            onBlur={(e) => {
+                              const value = parseFloat(e.target.value) || 0;
+                              if (value <= 0) {
+                                e.target.classList.add('border-destructive');
+                              } else {
+                                e.target.classList.remove('border-destructive');
+                              }
+                            }}
+                            className={`h-8 text-sm ${fuelData.me <= 0 ? 'border-destructive' : ''}`}
+                            min="0"
                           />
                           <p className="text-xs text-muted-foreground mt-1">
                             <Trans i18nKey="common:fuelInventory.tonsPerDay" />
                           </p>
+                          {fuelData.me <= 0 && (
+                            <p className="text-xs text-destructive mt-1">
+                              <Trans i18nKey="common:validation.meMinValue" defaults="Main Engine consumption must be greater than 0" />
+                            </p>
+                          )}
                         </div>
                         <div>
                           <Label htmlFor={`ae-${fuelType}`} className="text-xs">
@@ -516,12 +694,31 @@ export function FuelInventoryPageContent({ accountId }: FuelInventoryPageContent
                             type="number"
                             step="0.001"
                             value={fuelData.ae}
-                            onChange={(e) => handleFuelDataChange(fuelType, 'ae', parseFloat(e.target.value) || 0)}
-                            className="h-8 text-sm"
+                            onChange={(e) => {
+                              const value = parseFloat(e.target.value) || 0;
+                              if (value >= 0) {
+                                handleFuelDataChange(fuelType, 'ae', value);
+                              }
+                            }}
+                            onBlur={(e) => {
+                              const value = parseFloat(e.target.value) || 0;
+                              if (value <= 0) {
+                                e.target.classList.add('border-destructive');
+                              } else {
+                                e.target.classList.remove('border-destructive');
+                              }
+                            }}
+                            className={`h-8 text-sm ${fuelData.ae <= 0 ? 'border-destructive' : ''}`}
+                            min="0"
                           />
                           <p className="text-xs text-muted-foreground mt-1">
                             <Trans i18nKey="common:fuelInventory.tonsPerDay" />
                           </p>
+                          {fuelData.ae <= 0 && (
+                            <p className="text-xs text-destructive mt-1">
+                              <Trans i18nKey="common:validation.aeMinValue" defaults="Auxiliary Engine consumption must be greater than 0" />
+                            </p>
+                          )}
                         </div>
                         <div>
                           <Label htmlFor={`boiler-${fuelType}`} className="text-xs">
@@ -532,12 +729,31 @@ export function FuelInventoryPageContent({ accountId }: FuelInventoryPageContent
                             type="number"
                             step="0.001"
                             value={fuelData.boiler}
-                            onChange={(e) => handleFuelDataChange(fuelType, 'boiler', parseFloat(e.target.value) || 0)}
-                            className="h-8 text-sm"
+                            onChange={(e) => {
+                              const value = parseFloat(e.target.value) || 0;
+                              if (value >= 0) {
+                                handleFuelDataChange(fuelType, 'boiler', value);
+                              }
+                            }}
+                            onBlur={(e) => {
+                              const value = parseFloat(e.target.value) || 0;
+                              if (value <= 0) {
+                                e.target.classList.add('border-destructive');
+                              } else {
+                                e.target.classList.remove('border-destructive');
+                              }
+                            }}
+                            className={`h-8 text-sm ${fuelData.boiler <= 0 ? 'border-destructive' : ''}`}
+                            min="0"
                           />
                           <p className="text-xs text-muted-foreground mt-1">
                             <Trans i18nKey="common:fuelInventory.tonsPerDay" />
                           </p>
+                          {fuelData.boiler <= 0 && (
+                            <p className="text-xs text-destructive mt-1">
+                              <Trans i18nKey="common:validation.boilerMinValue" defaults="Boiler consumption must be greater than 0" />
+                            </p>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -548,7 +764,7 @@ export function FuelInventoryPageContent({ accountId }: FuelInventoryPageContent
               <div className="flex justify-end">
                 <Button
                   onClick={handleSaveFuelData}
-                  disabled={updateFuelDataMutation.isPending}
+                  disabled={updateFuelDataMutation.isPending || !isFormValid}
                 >
                   <Save className="mr-2 h-4 w-4" />
                   {updateFuelDataMutation.isPending ? (
@@ -577,14 +793,17 @@ function AddPortDialog({
   onCancel: () => void;
 }) {
   const { t } = useTranslation();
-  const [portData, setPortData] = useState({
-    port_name: '',
-    eta_date: '',
+  
+  const form = useForm<PortDataForm>({
+    resolver: zodResolver(PortDataSchema),
+    defaultValues: {
+      port_name: '',
+      eta_date: '',
+    },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(portData);
+  const handleSubmit = (data: PortDataForm) => {
+    onSubmit(data);
   };
 
   return (
@@ -597,41 +816,54 @@ function AddPortDialog({
           <Trans i18nKey="common:fuelInventory.addPortDescription" defaults="Add a new port call for the selected ship." />
         </DialogDescription>
       </DialogHeader>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <Label htmlFor="port_name">
-            <Trans i18nKey="common:fuelInventory.portToCall" />
-          </Label>
-          <Input
-            id="port_name"
-            type="text"
-            placeholder={t('common:fuelInventory.portToCall')}
-            value={portData.port_name}
-            onChange={(e) => setPortData({ ...portData, port_name: e.target.value })}
-            required
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="port_name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  <Trans i18nKey="common:fuelInventory.portToCall" />
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder={t('common:fuelInventory.portToCall')}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </div>
-        <div>
-          <Label htmlFor="eta_date">
-            <Trans i18nKey="common:fuelInventory.eta" />
-          </Label>
-          <Input
-            id="eta_date"
-            type="datetime-local"
-            value={portData.eta_date}
-            onChange={(e) => setPortData({ ...portData, eta_date: e.target.value })}
-            required
+          <FormField
+            control={form.control}
+            name="eta_date"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  <Trans i18nKey="common:fuelInventory.eta" />
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    type="datetime-local"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </div>
-        <DialogFooter>
-          <Button type="button" variant="ghost" onClick={onCancel}>
-            <Trans i18nKey="common:cancel" />
-          </Button>
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? <Trans i18nKey="common:saving" /> : <Trans i18nKey="common:fuelInventory.save" />}
-          </Button>
-        </DialogFooter>
-      </form>
+          <DialogFooter>
+            <Button type="button" variant="ghost" onClick={onCancel}>
+              <Trans i18nKey="common:cancel" />
+            </Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? <Trans i18nKey="common:saving" /> : <Trans i18nKey="common:fuelInventory.save" />}
+            </Button>
+          </DialogFooter>
+        </form>
+      </Form>
     </DialogContent>
   );
 }

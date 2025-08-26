@@ -122,7 +122,10 @@
   "saving": "Saving...",
   "createShip": "Create Ship",
   "updateShip": "Update Ship",
-  "shipCreatedSuccessfully": "Ship created successfully",
+        "shipCreatedSuccessfully": "Ship created successfully",
+  "errorCreatingShip": "Error creating ship",
+  "createShip": "Create Ship",
+  "updateShip": "Update Ship",
   "shipUpdatedSuccessfully": "Ship updated successfully",
   "shipDeletedSuccessfully": "Ship deleted successfully",
   "errorLoadingShips": "Error loading ships",
@@ -232,5 +235,25 @@
     "addPortDescription": "Add a new port call for the selected ship.",
     "tons": "tons",
     "tonsPerDay": "tons/day"
+  },
+  "validation": {
+    "required": "This field is required",
+    "minLength": "Must be at least {{min}} characters",
+    "maxLength": "Must be no more than {{max}} characters",
+    "minValue": "Must be {{min}} or greater",
+    "maxValue": "Must be {{max}} or less",
+    "invalidNumber": "Please enter a valid number",
+    "invalidDate": "Please enter a valid date and time",
+    "shipRequired": "Please select a ship",
+    "portNameRequired": "Port name is required",
+    "etaRequired": "ETA date and time is required",
+    "etaFuture": "ETA must be in the future",
+    "fuelTypeRequired": "Fuel type is required",
+    "robMinValue": "R.O.B. must be 0 or greater",
+    "meMinValue": "Main Engine consumption must be greater than 0",
+    "aeMinValue": "Auxiliary Engine consumption must be greater than 0",
+    "boilerMinValue": "Boiler consumption must be greater than 0",
+    "fuelTypesRequired": "Please select at least one fuel type",
+    "imoNumberFormat": "IMO number must be exactly 7 digits"
   }
 }

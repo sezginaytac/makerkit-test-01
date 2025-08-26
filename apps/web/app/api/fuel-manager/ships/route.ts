@@ -65,43 +65,12 @@ export async function GET(request: NextRequest) {
 // POST /api/fuel-manager/ships - Create a new ship
 export async function POST(request: NextRequest) {
   try {
-    console.log('=== Ships POST API Debug ===');
-    console.log('Request headers:', Object.fromEntries(request.headers.entries()));
-    console.log('Request cookies:', request.cookies.getAll());
-    
-    // Try to get JWT token from Authorization header first
-    const authHeader = request.headers.get('authorization');
-    let supabase;
-    
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      console.log('Using Authorization header for authentication');
-      const token = authHeader.substring(7);
-      
-      // Create client with JWT token
-      const { createClient } = await import('@supabase/supabase-js');
-      supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-          global: {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        }
-      );
-    } else {
-      console.log('Using cookie-based authentication');
-      supabase = getSupabaseServerClient();
-    }
+    const supabase = getSupabaseServerClient();
     
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser();
-    console.log('Auth result - user:', user ? 'exists' : 'null');
-    console.log('Auth result - error:', authError);
     
     if (authError || !user) {
-      console.log('Authentication failed - returning 401');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -140,7 +109,7 @@ export async function POST(request: NextRequest) {
       .from('ships')
       .select('id')
       .eq('name', shipName)
-      .eq('account_id', user.id)
+      .eq('account_id', accountId || user.id)
       .single();
 
     if (existingShip) {
@@ -154,7 +123,7 @@ export async function POST(request: NextRequest) {
     const shipData: any = { 
       name: shipName,
       account_id: accountId || user.id, // Use provided accountId or fallback to user.id
-                     fuel_types: fuel_types || 'HFO,VLSFO,ULSFO', // Default to all fuel types if not provided
+      fuel_types: fuel_types || 'HFO,VLSFO,ULSFO', // Default to all fuel types if not provided
       created_by: user.id,
       updated_by: user.id
     };

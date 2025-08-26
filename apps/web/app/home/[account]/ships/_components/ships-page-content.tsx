@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Edit, Trash2, Search, Filter } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import { Button } from '@kit/ui/button';
 import { Input } from '@kit/ui/input';
@@ -34,6 +36,8 @@ import { Textarea } from '@kit/ui/textarea';
 import { Trans } from '@kit/ui/trans';
 import { toast } from '@kit/ui/sonner';
 import { useTranslation } from 'react-i18next';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@kit/ui/form';
+import { ShipSchema, type ShipForm as ShipFormType } from '../_lib/schema/ship.schema';
 
 interface Ship {
   id: string;
@@ -208,6 +212,7 @@ export function ShipsPageContent({ accountId }: ShipsPageContentProps) {
                 </DialogDescription>
               </DialogHeader>
              <ShipForm
+               key={`create-ship-${isCreateDialogOpen}`}
                onSubmit={(data) => createShipMutation.mutate(data)}
                isLoading={createShipMutation.isPending}
                onCancel={() => setIsCreateDialogOpen(false)}
@@ -493,17 +498,41 @@ export function ShipsPageContent({ accountId }: ShipsPageContentProps) {
   // Parse existing fuel types from comma-separated string
   const existingFuelTypes = ship?.fuel_types ? ship.fuel_types.split(',').map(t => t.trim()) : [];
   
-  const [formData, setFormData] = useState({
-    name: ship?.name || '',
-    imo_number: ship?.imo_number || '',
-    vessel_type: ship?.vessel_type || '',
-    capacity: ship?.capacity || '',
-    fuel_consumption_rate: ship?.fuel_consumption_rate || '',
+  const form = useForm<ShipFormType>({
+    resolver: zodResolver(ShipSchema),
+    defaultValues: {
+      name: ship?.name || '',
+      imo_number: ship?.imo_number || '',
+      vessel_type: ship?.vessel_type || '',
+      capacity: ship?.capacity ? Number(ship.capacity) : undefined,
+      fuel_consumption_rate: ship?.fuel_consumption_rate ? Number(ship.fuel_consumption_rate) : undefined,
+      fuel_types: ship?.fuel_types || 'HFO,VLSFO,ULSFO',
+    },
   });
+  
+  const [selectedFuelTypes, setSelectedFuelTypes] = useState<string[]>(existingFuelTypes.length > 0 ? existingFuelTypes : ['HFO', 'VLSFO', 'ULSFO']);
 
-  const [selectedFuelTypes, setSelectedFuelTypes] = useState<string[]>(existingFuelTypes);
+  // Reset form when ship prop changes (for new ship creation)
+  useEffect(() => {
+    if (!ship) {
+      // Reset form for new ship
+      form.reset({
+        name: '',
+        imo_number: '',
+        vessel_type: '',
+        capacity: undefined,
+        fuel_consumption_rate: undefined,
+        fuel_types: 'HFO,VLSFO,ULSFO',
+      });
+      setSelectedFuelTypes(['HFO', 'VLSFO', 'ULSFO']);
+    }
+  }, [ship, form]);
 
-             const fuelTypeOptions = [
+  // Check if form is valid
+  const isFormValid = form.formState.isValid && selectedFuelTypes.length > 0 && 
+    /^\d{7}$/.test(form.getValues('imo_number'));
+
+  const fuelTypeOptions = [
              { value: 'HFO', label: <Trans i18nKey="common:fuelTypesOptions.hfo" defaults="HFO (Heavy Fuel Oil)" /> },
              { value: 'VLSFO', label: <Trans i18nKey="common:fuelTypesOptions.vlsfo" defaults="VLSFO (Very Low Sulphur Fuel Oil)" /> },
              { value: 'ULSFO', label: <Trans i18nKey="common:fuelTypesOptions.ulsfo" defaults="ULSFO (Ultra Low Sulphur Fuel Oil)" /> },
@@ -517,106 +546,151 @@ export function ShipsPageContent({ accountId }: ShipsPageContentProps) {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (data: ShipFormType) => {
+    // Validate that at least one fuel type is selected
+    if (selectedFuelTypes.length === 0) {
+      toast.error(t('common:validation.fuelTypesRequired'));
+      return;
+    }
     
-                 // Validate that at least one fuel type is selected
-             if (selectedFuelTypes.length === 0) {
-               alert(t('common:fuelTypesRequired'));
-               return;
-             }
+    // Validate IMO number format
+    if (!/^\d{7}$/.test(data.imo_number)) {
+      toast.error(t('common:validation.imoNumberFormat'));
+      return;
+    }
     
     onSubmit({
-      ...formData,
-      capacity: formData.capacity ? Number(formData.capacity) : undefined,
-      fuel_consumption_rate: formData.fuel_consumption_rate ? Number(formData.fuel_consumption_rate) : undefined,
+      ...data,
+      capacity: data.capacity,
+      fuel_consumption_rate: data.fuel_consumption_rate,
       fuel_types: selectedFuelTypes.join(','),
     });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="name">
-            <Trans i18nKey="common:shipName" /> *
-          </Label>
-          <Input
-            id="name"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            required
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  <Trans i18nKey="common:shipName" /> *
+                </FormLabel>
+                <FormControl>
+                  <Input placeholder={t('common:shipName')} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="imo_number"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  <Trans i18nKey="common:imoNumber" /> *
+                </FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder={t('common:imoNumber')} 
+                    {...field}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, ''); // Only allow digits
+                      field.onChange(value);
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+                {field.value && !/^\d{7}$/.test(field.value) && (
+                  <p className="text-sm text-destructive">
+                    <Trans i18nKey="common:validation.imoNumberFormat" defaults="IMO number must be exactly 7 digits" />
+                  </p>
+                )}
+              </FormItem>
+            )}
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="imo_number">
-            <Trans i18nKey="common:imoNumber" /> *
-          </Label>
-          <Input
-            id="imo_number"
-            value={formData.imo_number}
-            onChange={(e) => setFormData({ ...formData, imo_number: e.target.value })}
-            required
+        
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="vessel_type"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  <Trans i18nKey="common:vesselType" />
+                </FormLabel>
+                <FormControl>
+                  <Input placeholder="e.g., Container Ship, Tanker" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="capacity"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  <Trans i18nKey="common:capacityTons" />
+                </FormLabel>
+                <FormControl>
+                  <Input 
+                    type="number" 
+                    placeholder="e.g., 50000" 
+                    {...field}
+                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
         </div>
-      </div>
-      
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="vessel_type">
-            <Trans i18nKey="common:vesselType" />
-          </Label>
-          <Input
-            id="vessel_type"
-            value={formData.vessel_type}
-            onChange={(e) => setFormData({ ...formData, vessel_type: e.target.value })}
-            placeholder="e.g., Container Ship, Tanker"
+        
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="fuel_consumption_rate"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  <Trans i18nKey="common:fuelConsumptionRateTonsPerDay" />
+                </FormLabel>
+                <FormControl>
+                  <Input 
+                    type="number" 
+                    step="0.01" 
+                    placeholder="e.g., 25.5" 
+                    {...field}
+                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="capacity">
-            <Trans i18nKey="common:capacityTons" />
-          </Label>
-          <Input
-            id="capacity"
-            type="number"
-            value={formData.capacity}
-            onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
-            placeholder="e.g., 50000"
-          />
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="fuel_consumption_rate">
-            <Trans i18nKey="common:fuelConsumptionRateTonsPerDay" />
-          </Label>
-          <Input
-            id="fuel_consumption_rate"
-            type="number"
-            step="0.01"
-            value={formData.fuel_consumption_rate}
-            onChange={(e) => setFormData({ ...formData, fuel_consumption_rate: e.target.value })}
-            placeholder="e.g., 25.5"
-          />
-        </div>
-      </div>
 
-                     {/* Fuel Types Section */}
-               <div className="space-y-3">
-                 <Label className="text-base font-medium">
-                   <Trans i18nKey="common:fuelTypes" defaults="Fuel Types" /> *
-                 </Label>
-                 <div className="space-y-2">
-                   {fuelTypeOptions.map((option) => (
-                     <div key={option.value} className="flex items-center space-x-2">
-                       <input
-                         type="checkbox"
-                         id={`fuel-type-${option.value}`}
-                         checked={selectedFuelTypes.includes(option.value)}
-                         onChange={(e) => handleFuelTypeChange(option.value, e.target.checked)}
-                         className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+        {/* Fuel Types Section */}
+        <div className="space-y-3">
+          <Label className="text-base font-medium">
+            <Trans i18nKey="common:fuelTypes" defaults="Fuel Types" /> *
+          </Label>
+          <div className="space-y-2">
+            {fuelTypeOptions.map((option) => (
+              <div key={option.value} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id={`fuel-type-${option.value}`}
+                  checked={selectedFuelTypes.includes(option.value)}
+                  onChange={(e) => handleFuelTypeChange(option.value, e.target.checked)}
+                  className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                        />
                        <Label htmlFor={`fuel-type-${option.value}`} className="text-sm font-normal">
                          {option.label}
@@ -631,14 +705,24 @@ export function ShipsPageContent({ accountId }: ShipsPageContentProps) {
                  )}
                </div>
 
-      <div className="flex justify-end space-x-2 pt-4">
-        <Button type="button" variant="outline" onClick={onCancel}>
-          <Trans i18nKey="common:cancel" />
-        </Button>
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? t('common:saving') : ship ? t('common:updateShip') : t('common:createShip')}
-        </Button>
-      </div>
-    </form>
+        <DialogFooter>
+          <Button type="button" variant="ghost" onClick={onCancel}>
+            <Trans i18nKey="common:cancel" />
+          </Button>
+          <Button type="submit" disabled={isLoading || !isFormValid}>
+            {isLoading ? (
+              <Trans i18nKey="common:saving" />
+            ) : ship ? (
+              <Trans i18nKey="common:updateShip" />
+            ) : (
+              <Trans i18nKey="common:createShip" />
+            )}
+          </Button>
+        </DialogFooter>
+      </form>
+    </Form>
   );
 }
+
+export { ShipForm };
+export default ShipsPageContent;

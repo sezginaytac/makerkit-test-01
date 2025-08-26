@@ -122,7 +122,10 @@
   "saving": "Kaydediliyor...",
   "createShip": "Gemi Oluştur",
   "updateShip": "Gemi Güncelle",
-  "shipCreatedSuccessfully": "Gemi başarıyla oluşturuldu",
+        "shipCreatedSuccessfully": "Gemi başarıyla oluşturuldu",
+  "errorCreatingShip": "Gemi oluşturulurken hata oluştu",
+  "createShip": "Gemi Oluştur",
+  "updateShip": "Gemi Güncelle",
   "shipUpdatedSuccessfully": "Gemi başarıyla güncellendi",
   "shipDeletedSuccessfully": "Gemi başarıyla silindi",
   "errorLoadingShips": "Gemiler yüklenirken hata oluştu",
@@ -232,5 +235,25 @@
     "addPortDescription": "Seçili gemi için yeni bir liman çağrısı ekleyin.",
     "tons": "ton",
     "tonsPerDay": "ton/gün"
+  },
+  "validation": {
+    "required": "Bu alan zorunludur",
+    "minLength": "En az {{min}} karakter olmalıdır",
+    "maxLength": "En fazla {{max}} karakter olmalıdır",
+    "minValue": "{{min}} veya daha büyük olmalıdır",
+    "maxValue": "{{max}} veya daha küçük olmalıdır",
+    "invalidNumber": "Lütfen geçerli bir sayı girin",
+    "invalidDate": "Lütfen geçerli bir tarih ve saat girin",
+    "shipRequired": "Lütfen bir gemi seçin",
+    "portNameRequired": "Liman adı zorunludur",
+    "etaRequired": "ETA tarih ve saati zorunludur",
+    "etaFuture": "ETA gelecekte olmalıdır",
+    "fuelTypeRequired": "Yakıt türü zorunludur",
+    "robMinValue": "R.O.B. 0 veya daha büyük olmalıdır",
+    "meMinValue": "Ana motor tüketimi 0'dan büyük olmalıdır",
+    "aeMinValue": "Yardımcı motor tüketimi 0'dan büyük olmalıdır",
+    "boilerMinValue": "Kazan tüketimi 0'dan büyük olmalıdır",
+    "fuelTypesRequired": "En az bir yakıt türü seçmelisiniz",
+    "imoNumberFormat": "IMO numarası tam olarak 7 haneli olmalıdır"
   }
 }
