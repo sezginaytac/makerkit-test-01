@@ -368,6 +368,7 @@ export type Database = {
           max_fuel_capacity: number | null
           me: number | null
           min_fuel_policy: number | null
+          port_id: string | null
           rob: number | null
           ship_id: string
           updated_at: string
@@ -385,6 +386,7 @@ export type Database = {
           max_fuel_capacity?: number | null
           me?: number | null
           min_fuel_policy?: number | null
+          port_id?: string | null
           rob?: number | null
           ship_id: string
           updated_at?: string
@@ -402,6 +404,7 @@ export type Database = {
           max_fuel_capacity?: number | null
           me?: number | null
           min_fuel_policy?: number | null
+          port_id?: string | null
           rob?: number | null
           ship_id?: string
           updated_at?: string
@@ -430,6 +433,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "fuel_inventory_port_id_fkey"
+            columns: ["port_id"]
+            isOneToOne: false
+            referencedRelation: "ports"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "fuel_inventory_ship_id_fkey"
             columns: ["ship_id"]
             isOneToOne: false
@@ -441,75 +451,117 @@ export type Database = {
       fuel_quality_data: {
         Row: {
           account_id: string
+          aluminium: number | null
           aluminium_silicon: number | null
           ash: number | null
+          calcium: number | null
           ccai: number | null
           created_at: string
           created_by: string
           date: string | null
-          density_fifteen_c: number | null
+          density_15c: number | null
+          flash_point: number | null
           fuel_type: string | null
           grade: string | null
+          gross_specific_energy: number | null
           id: string
-          k_viscosity_fifty_c: number | null
+          iron: number | null
+          k_viscosity_50c: number | null
+          lead: number | null
+          mcr: number | null
+          net_specific_energy: number | null
+          nickel: number | null
+          phosphorus: number | null
           port: string | null
+          potassium: number | null
           pour_point: number | null
+          silicon: number | null
           sodium: number | null
           sulphur_content: number | null
           supplier: string | null
           total_acid_number: number | null
+          total_sediment: number | null
           updated_at: string
           updated_by: string
           vanadium: number | null
           water_content: number | null
+          zinc: number | null
         }
         Insert: {
           account_id: string
+          aluminium?: number | null
           aluminium_silicon?: number | null
           ash?: number | null
+          calcium?: number | null
           ccai?: number | null
           created_at?: string
           created_by: string
           date?: string | null
-          density_fifteen_c?: number | null
+          density_15c?: number | null
+          flash_point?: number | null
           fuel_type?: string | null
           grade?: string | null
+          gross_specific_energy?: number | null
           id?: string
-          k_viscosity_fifty_c?: number | null
+          iron?: number | null
+          k_viscosity_50c?: number | null
+          lead?: number | null
+          mcr?: number | null
+          net_specific_energy?: number | null
+          nickel?: number | null
+          phosphorus?: number | null
           port?: string | null
+          potassium?: number | null
           pour_point?: number | null
+          silicon?: number | null
           sodium?: number | null
           sulphur_content?: number | null
           supplier?: string | null
           total_acid_number?: number | null
+          total_sediment?: number | null
           updated_at?: string
           updated_by: string
           vanadium?: number | null
           water_content?: number | null
+          zinc?: number | null
         }
         Update: {
           account_id?: string
+          aluminium?: number | null
           aluminium_silicon?: number | null
           ash?: number | null
+          calcium?: number | null
           ccai?: number | null
           created_at?: string
           created_by?: string
           date?: string | null
-          density_fifteen_c?: number | null
+          density_15c?: number | null
+          flash_point?: number | null
           fuel_type?: string | null
           grade?: string | null
+          gross_specific_energy?: number | null
           id?: string
-          k_viscosity_fifty_c?: number | null
+          iron?: number | null
+          k_viscosity_50c?: number | null
+          lead?: number | null
+          mcr?: number | null
+          net_specific_energy?: number | null
+          nickel?: number | null
+          phosphorus?: number | null
           port?: string | null
+          potassium?: number | null
           pour_point?: number | null
+          silicon?: number | null
           sodium?: number | null
           sulphur_content?: number | null
           supplier?: string | null
           total_acid_number?: number | null
+          total_sediment?: number | null
           updated_at?: string
           updated_by?: string
           vanadium?: number | null
           water_content?: number | null
+          zinc?: number | null
         }
         Relationships: [
           {
@@ -1285,6 +1337,7 @@ export type Database = {
           created_at: string
           created_by: string
           fuel_consumption_rate: number | null
+          fuel_types: string
           id: string
           imo_number: string
           name: string
@@ -1298,6 +1351,7 @@ export type Database = {
           created_at?: string
           created_by: string
           fuel_consumption_rate?: number | null
+          fuel_types?: string
           id?: string
           imo_number: string
           name: string
@@ -1311,6 +1365,7 @@ export type Database = {
           created_at?: string
           created_by?: string
           fuel_consumption_rate?: number | null
+          fuel_types?: string
           id?: string
           imo_number?: string
           name?: string
@@ -2089,7 +2144,6 @@ export type Database = {
         | "invites.manage"
         | "tickets.update"
         | "tickets.delete"
-        | "ships.manage"
       billing_provider: "stripe" | "lemon-squeezy" | "paddle"
       fuel_type:
         | "diesel"
@@ -2774,7 +2828,6 @@ export const Constants = {
         "invites.manage",
         "tickets.update",
         "tickets.delete",
-        "ships.manage",
       ],
       billing_provider: ["stripe", "lemon-squeezy", "paddle"],
       fuel_type: [

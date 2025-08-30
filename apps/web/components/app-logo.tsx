@@ -41,13 +41,13 @@ function LogoImage({
          Man
        </text>
        <text
-         className="dark:hidden"
+        className="dark:hidden"
          x="240"
          y="90"
          fontFamily="Arial, sans-serif"
          fontSize="60"
          fontWeight="bold"
-         fill="url(#paint0_linear_2621_2)"
+        fill="url(#paint0_linear_2621_2)"
        >
          AI
        </text>
@@ -87,13 +87,13 @@ function LogoImage({
          Man
        </text>
        <text
-         className="hidden dark:block"
+        className="hidden dark:block"
          x="240"
          y="90"
          fontFamily="Arial, sans-serif"
          fontSize="60"
          fontWeight="bold"
-         fill="url(#paint0_linear_2621_2_dark)"
+        fill="url(#paint0_linear_2621_2_dark)"
        >
          AI
        </text>
@@ -104,7 +104,7 @@ function LogoImage({
          fontFamily="Arial, sans-serif"
          fontSize="60"
          fontWeight="bold"
-         fill="url(#paint1_linear_2621_2)"
+        fill="url(#paint1_linear_2621_2)"
        >
          ger
        </text>

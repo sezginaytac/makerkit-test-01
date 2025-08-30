@@ -482,16 +482,16 @@ export function FuelInventoryPageContent({ accountId }: FuelInventoryPageContent
                   <DialogTrigger asChild>
                     <Button>
                       <Plus className="mr-2 h-4 w-4" />
-                      <Trans i18nKey="common:addShip" />
+                      <Trans i18nKey="common:fuelInventory.addShip" />
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[600px]">
                     <DialogHeader>
                       <DialogTitle>
-                        <Trans i18nKey="common:addNewShip" />
+                        <Trans i18nKey="common:fuelInventory.addNewShip" />
                       </DialogTitle>
                       <DialogDescription>
-                        <Trans i18nKey="common:addShipDescription" />
+                        <Trans i18nKey="common:fuelInventory.addShipDescription" />
                       </DialogDescription>
                     </DialogHeader>
                     <ShipForm
@@ -508,7 +508,12 @@ export function FuelInventoryPageContent({ accountId }: FuelInventoryPageContent
             {selectedShip && (
               <div>
                 <h3 className="text-lg font-semibold">
-                  {t('common:fuelInventory.fuelDataFor', { shipName: selectedShip.name })}
+                  {(() => {
+                    console.log('selectedShip:', selectedShip);
+                    console.log('selectedShip.name:', selectedShip.name);
+                    // Simple solution: direct string interpolation
+                    return `Fuel Data for ${selectedShip.name}`;
+                  })()}
                 </h3>
                 <p className="text-muted-foreground">
                   {selectedShip.vessel_type} • {selectedShip.imo_number}
@@ -617,7 +622,7 @@ export function FuelInventoryPageContent({ accountId }: FuelInventoryPageContent
                         <Input
                           id={`rob-${fuelType}`}
                           type="number"
-                          value={fuelData.rob}
+                          value={fuelData.rob || 0}
                           readOnly
                           className="bg-muted h-8 text-sm"
                         />
@@ -634,7 +639,7 @@ export function FuelInventoryPageContent({ accountId }: FuelInventoryPageContent
                         <Input
                           id={`total-${fuelType}`}
                           type="number"
-                          value={fuelData.total}
+                          value={fuelData.total || 0}
                           readOnly
                           className="bg-muted font-semibold h-8 text-sm"
                         />
@@ -658,7 +663,7 @@ export function FuelInventoryPageContent({ accountId }: FuelInventoryPageContent
                             id={`me-${fuelType}`}
                             type="number"
                             step="0.001"
-                            value={fuelData.me}
+                            value={fuelData.me || 0}
                             onChange={(e) => {
                               const value = parseFloat(e.target.value) || 0;
                               if (value >= 0) {
@@ -681,7 +686,7 @@ export function FuelInventoryPageContent({ accountId }: FuelInventoryPageContent
                           </p>
                           {fuelData.me <= 0 && (
                             <p className="text-xs text-destructive mt-1">
-                              <Trans i18nKey="common:validation.meMinValue" defaults="Main Engine consumption must be greater than 0" />
+                              <Trans i18nKey="common:validation.meMinValue" />
                             </p>
                           )}
                         </div>
@@ -693,7 +698,7 @@ export function FuelInventoryPageContent({ accountId }: FuelInventoryPageContent
                             id={`ae-${fuelType}`}
                             type="number"
                             step="0.001"
-                            value={fuelData.ae}
+                            value={fuelData.ae || 0}
                             onChange={(e) => {
                               const value = parseFloat(e.target.value) || 0;
                               if (value >= 0) {
@@ -716,7 +721,7 @@ export function FuelInventoryPageContent({ accountId }: FuelInventoryPageContent
                           </p>
                           {fuelData.ae <= 0 && (
                             <p className="text-xs text-destructive mt-1">
-                              <Trans i18nKey="common:validation.aeMinValue" defaults="Auxiliary Engine consumption must be greater than 0" />
+                              <Trans i18nKey="common:validation.aeMinValue" />
                             </p>
                           )}
                         </div>
@@ -728,7 +733,7 @@ export function FuelInventoryPageContent({ accountId }: FuelInventoryPageContent
                             id={`boiler-${fuelType}`}
                             type="number"
                             step="0.001"
-                            value={fuelData.boiler}
+                            value={fuelData.boiler || 0}
                             onChange={(e) => {
                               const value = parseFloat(e.target.value) || 0;
                               if (value >= 0) {
@@ -751,7 +756,7 @@ export function FuelInventoryPageContent({ accountId }: FuelInventoryPageContent
                           </p>
                           {fuelData.boiler <= 0 && (
                             <p className="text-xs text-destructive mt-1">
-                              <Trans i18nKey="common:validation.boilerMinValue" defaults="Boiler consumption must be greater than 0" />
+                              <Trans i18nKey="common:validation.boilerMinValue" />
                             </p>
                           )}
                         </div>
@@ -813,7 +818,7 @@ function AddPortDialog({
           <Trans i18nKey="common:fuelInventory.addPort" />
         </DialogTitle>
         <DialogDescription>
-          <Trans i18nKey="common:fuelInventory.addPortDescription" defaults="Add a new port call for the selected ship." />
+          <Trans i18nKey="common:fuelInventory.addPortDescription" />
         </DialogDescription>
       </DialogHeader>
       <Form {...form}>

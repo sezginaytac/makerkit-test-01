@@ -26,10 +26,10 @@ export function DashboardDemo({ account }: DashboardDemoProps) {
       color: 'bg-green-500',
     },
     {
-      title: <Trans i18nKey="common:fuelManager.fuelQuality" defaults="Fuel Quality" />,
-      description: <Trans i18nKey="common:fuelManager.fuelQualityDescription" defaults="Upload and analyze fuel quality data files" />,
+      title: <Trans i18nKey="common:fuelQualityData.title" defaults="Fuel Quality Data" />,
+      description: <Trans i18nKey="common:fuelQualityData.description" defaults="Upload and manage fuel quality data from Excel files" />,
       icon: <Database className="h-8 w-8" />,
-      href: `/home/${account}/fuel-quality`,
+      href: `/home/${account}/fuel-quality-data`,
       color: 'bg-purple-500',
     },
     {

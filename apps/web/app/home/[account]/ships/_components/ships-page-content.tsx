@@ -504,8 +504,8 @@ export function ShipsPageContent({ accountId }: ShipsPageContentProps) {
       name: ship?.name || '',
       imo_number: ship?.imo_number || '',
       vessel_type: ship?.vessel_type || '',
-      capacity: ship?.capacity ? Number(ship.capacity) : undefined,
-      fuel_consumption_rate: ship?.fuel_consumption_rate ? Number(ship.fuel_consumption_rate) : undefined,
+      capacity: ship?.capacity ? Number(ship.capacity) : 0,
+      fuel_consumption_rate: ship?.fuel_consumption_rate ? Number(ship.fuel_consumption_rate) : 0,
       fuel_types: ship?.fuel_types || 'HFO,VLSFO,ULSFO',
     },
   });
@@ -520,8 +520,8 @@ export function ShipsPageContent({ accountId }: ShipsPageContentProps) {
         name: '',
         imo_number: '',
         vessel_type: '',
-        capacity: undefined,
-        fuel_consumption_rate: undefined,
+        capacity: 0,
+        fuel_consumption_rate: 0,
         fuel_types: 'HFO,VLSFO,ULSFO',
       });
       setSelectedFuelTypes(['HFO', 'VLSFO', 'ULSFO']);
@@ -561,8 +561,8 @@ export function ShipsPageContent({ accountId }: ShipsPageContentProps) {
     
     onSubmit({
       ...data,
-      capacity: data.capacity,
-      fuel_consumption_rate: data.fuel_consumption_rate,
+      capacity: data.capacity || 0,
+      fuel_consumption_rate: data.fuel_consumption_rate || 0,
       fuel_types: selectedFuelTypes.join(','),
     });
   };
@@ -644,7 +644,8 @@ export function ShipsPageContent({ accountId }: ShipsPageContentProps) {
                     type="number" 
                     placeholder="e.g., 50000" 
                     {...field}
-                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                    value={field.value || ''}
+                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 0)}
                   />
                 </FormControl>
                 <FormMessage />
@@ -668,7 +669,8 @@ export function ShipsPageContent({ accountId }: ShipsPageContentProps) {
                     step="0.01" 
                     placeholder="e.g., 25.5" 
                     {...field}
-                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                    value={field.value || ''}
+                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 0)}
                   />
                 </FormControl>
                 <FormMessage />
